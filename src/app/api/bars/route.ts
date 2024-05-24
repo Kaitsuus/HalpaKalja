@@ -1,27 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { barsService } from '../../../services/barService';
-import { barSchema } from '../../../validation/barValidation';
+import { barSchema, bulkBarSchema } from '../../../validation/barValidation';
 import { authenticate } from '../../../middleware/auth';
+import { Bar } from '@/interface/interface';
 
 export async function POST(req: NextRequest) {
   const authResponse = await authenticate(req);
   if (authResponse) return authResponse;
 
   const body = await req.json();
-  const { error, value } = barSchema.validate(body);
 
-  if (error) {
-    return new Response(error.details[0].message, { status: 400 });
-  }
+  if (Array.isArray(body)) {
+    const { error, value } = bulkBarSchema.validate(body);
 
-  try {
-    const newBar = await barsService.addBar(value);
-    return NextResponse.json(newBar, { status: 201 });
-  } catch (error: any) {
-    if (error.message === 'Bar with the same name, latitude, and longitude already exists') {
-      return new Response(error.message, { status: 409 });
-    } else {
-      return new Response('Error adding bar', { status: 500 });
+    if (error) {
+      return new Response(error.details[0].message, { status: 400 });
+    }
+
+    try {
+      const updatedBars = await barsService.addOrUpdateBars(value as Bar[]);
+      return NextResponse.json(updatedBars, { status: 201 });
+    } catch (error: any) {
+      return new Response('Error adding or updating bars', { status: 500 });
+    }
+  } else {
+    const { error, value } = barSchema.validate(body);
+
+    if (error) {
+      return new Response(error.details[0].message, { status: 400 });
+    }
+
+    try {
+      const updatedBar = await barsService.addOrUpdateBar(value as Bar);
+      return NextResponse.json(updatedBar, { status: 201 });
+    } catch (error: any) {
+      return new Response('Error adding or updating bar', { status: 500 });
     }
   }
 }

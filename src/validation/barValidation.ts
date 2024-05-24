@@ -1,4 +1,3 @@
-// src/validation/barValidation.ts
 import Joi from 'joi';
 
 const drinksSchema = Joi.object().pattern(Joi.string(), Joi.number());
@@ -29,3 +28,5 @@ export const barSchema = Joi.object({
   open_hours: openHoursSchema.required(),
   ad: adSchema.optional()
 });
+
+export const bulkBarSchema = Joi.array().items(barSchema);
