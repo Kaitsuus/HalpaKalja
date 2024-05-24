@@ -1,11 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Box, Typography, CircularProgress, Backdrop, Alert } from '@mui/material';
+import { Box, CircularProgress, Backdrop, Typography } from '@mui/material';
+import Image from 'next/image';
 import { getBars } from '@/services/api';
 import { Bar } from '@/interface/interface';
 import Map from '@/components/Map';
 import Navigation from '@/components/Navigation';
 import AdCarousel from '@/components/AdCorousel';
+import Sad from '../assets/sad.svg';
 
 const HomePage = () => {
   const [selectedLocation, setSelectedLocation] = useState<{ lat: number, lng: number } | null>(null);
@@ -31,6 +33,15 @@ const HomePage = () => {
     fetchBars();
   }, []);
 
+  if (error) {
+    return (
+      <Box sx={styles.errorContainer}>
+        <Image src={Sad} width={200} height={200} alt="see you soon" />
+        <Typography variant="h6" sx={styles.errorMessage}>Pahoittelut nyt on kuppi nurin</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={styles.fullScreen}>
       <Navigation bars={bars} onBarClick={handleBarClick} />
@@ -40,10 +51,6 @@ const HomePage = () => {
       <Backdrop sx={styles.backdrop} open={loading}>
         <CircularProgress color="inherit" />
       </Backdrop>
-      
-      {error && (
-        <Alert severity="error" sx={styles.errorAlert}>{error}</Alert>
-      )}
     </Box>
   );
 };
@@ -60,13 +67,17 @@ const styles = {
   },
   backdrop: {
     color: '#fff',
-    zIndex: (theme) => theme.zIndex.drawer + 1,
+    zIndex: (theme: any) => theme.zIndex.drawer + 1,
   },
-  errorAlert: {
-    position: 'absolute',
-    top: '20px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    zIndex: 2,
+  errorContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    backgroundColor: '#ecece',
+  },
+  errorMessage: {
+    marginBottom: '5px',
   },
 };
