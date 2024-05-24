@@ -6,8 +6,6 @@ import { Bar } from '@/interface/interface';
 import Map from '@/components/Map';
 import Navigation from '@/components/Navigation';
 import AdCarousel from '@/components/AdCorousel';
-import Image from 'next/image';
-import Sad from '../assets/beericonsad.jpg'
 
 const HomePage = () => {
   const [selectedLocation, setSelectedLocation] = useState<{ lat: number, lng: number } | null>(null);
