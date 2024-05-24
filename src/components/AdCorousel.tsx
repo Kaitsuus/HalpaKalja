@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Bar } from '@/interface/interface';
+import { Padding } from '@mui/icons-material';
 
 interface AdCarouselProps {
   onAdSelect: (location: { lat: number; lng: number }) => void;
@@ -50,5 +51,6 @@ const styles = {
   adBanner: {
     height: '15vh',
     width: '100%',
+    padding: 2
   },
 };

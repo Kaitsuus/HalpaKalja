@@ -1,0 +1,10 @@
+/* customLeafletStyles.css */
+
+.leaflet-popup-content-wrapper {
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 10px !important;
+    border-width: 50px !important;
+    border-color: white;
+    background-color: #00475A !important;;
+  }

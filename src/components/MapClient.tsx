@@ -6,8 +6,10 @@ import { Box, Typography, IconButton } from '@mui/material';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import { Bar } from '../interface/interface';
-import beerIco from '../assets/beerIco.svg';
-
+import beerIco from '../assets/cheapMap.svg';
+import Image from 'next/image';
+import treAmigos from '../assets/treAmigos.svg'
+import '../util/customLeafletStyles.css';
 export interface MapClientProps {
   selectedLocation: { lat: number, lng: number } | null;
   bars: Bar[];
@@ -32,20 +34,26 @@ const MapClient: React.FC<MapClientProps> = ({ selectedLocation, bars }) => {
 
       const beerIcon = new L.Icon({
         iconUrl: beerIco.src,
-        iconSize: [35, 35],
-        iconAnchor: [17.5, 35],
+        iconSize: [50, 50],
+        iconAnchor: [19.5, 37],
         popupAnchor: [0, -35],
       });
 
       bars.forEach((bar: Bar) => {
         const popupContent = document.createElement('div');
         const PopupComponent = () => (
-          <Box>
-            <Typography>{bar.name}</Typography>
+          <Box style={{position: 'relative'}}>
+                <Box style={{ position: 'absolute', top: '-150px', left: '58%', transform: 'translateX(-50%)' }}>
+                  <Image src={treAmigos} height={250} width={250} alt='Three beers' />
+                </Box>
+          <Box style={{ textAlign: 'center', padding: '5px', maxWidth: '200px', color: 'white'}}>
+            <Typography variant="h6" style={{ marginTop: '50px', }}>{bar.name}</Typography>
             <Typography>
+            <Box style={{marginBottom: '10px'}}>
               {Object.entries(bar.drinks).map(([drink, price]) => (
                 <span key={drink}>{drink}: €{price}<br /></span>
               ))}
+              </Box>
               {typeof bar.open_hours === 'string' ? (
                 <span>Open: {bar.open_hours}</span>
               ) : (
@@ -55,13 +63,14 @@ const MapClient: React.FC<MapClientProps> = ({ selectedLocation, bars }) => {
               )}
             </Typography>
             {bar.ad && (
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="body2" color="textSecondary">
+              <Box>
+                <Typography variant="body2">
                   Special Offer: {bar.ad.offer} <br />
                   Time Range: {bar.ad.timeRange}
                 </Typography>
               </Box>
             )}
+          </Box>
           </Box>
         );
 
