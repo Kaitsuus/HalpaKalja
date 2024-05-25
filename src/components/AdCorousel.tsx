@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Bar } from '@/interface/interface';
-import { Padding } from '@mui/icons-material';
 
 interface AdCarouselProps {
   onAdSelect: (location: { lat: number; lng: number }) => void;
@@ -9,20 +8,31 @@ interface AdCarouselProps {
 }
 
 const AdCarousel: React.FC<AdCarouselProps> = ({ onAdSelect, bars }) => {
-  const barsWithAds = bars.filter(bar => bar.ad && (bar.ad.offer || bar.ad.timeRange)) as (Bar & { ad: NonNullable<Bar['ad']> })[];
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const;
+  type DayOfWeek = (typeof daysOfWeek)[number];
+  const today: DayOfWeek = daysOfWeek[new Date().getDay()];
+
+  const barsWithOffers = bars.filter(bar => {
+    if (typeof bar.open_hours === 'string') {
+      return false;
+    }
+    const todayDetails = bar.open_hours[today];
+    return todayDetails && todayDetails.offer;
+  });
+
   const [currentAdIndex, setCurrentAdIndex] = useState(0);
 
   useEffect(() => {
-    if (barsWithAds.length > 0) {
+    if (barsWithOffers.length > 0) {
       const interval = setInterval(() => {
-        setCurrentAdIndex(prevIndex => (prevIndex + 1) % barsWithAds.length);
+        setCurrentAdIndex(prevIndex => (prevIndex + 1) % barsWithOffers.length);
       }, 5000); // Change ad every 5 seconds
 
       return () => clearInterval(interval);
     }
-  }, [barsWithAds]);
+  }, [barsWithOffers]);
 
-  if (barsWithAds.length === 0) {
+  if (barsWithOffers.length === 0) {
     return (
       <Box style={{ cursor: 'pointer' }} sx={styles.adBanner}>
         <Typography variant="h6">Want your Bar to show here?</Typography>
@@ -30,17 +40,22 @@ const AdCarousel: React.FC<AdCarouselProps> = ({ onAdSelect, bars }) => {
     );
   }
 
-  const barWithAd = barsWithAds[currentAdIndex];
+  const barWithOffer = barsWithOffers[currentAdIndex];
+  const todayDetails = typeof barWithOffer.open_hours !== 'string' ? barWithOffer.open_hours[today] : null;
 
   const handleAdClick = () => {
-    onAdSelect({ lat: barWithAd.lat, lng: barWithAd.lng });
+    onAdSelect({ lat: barWithOffer.lat, lng: barWithOffer.lng });
   };
 
   return (
     <Box onClick={handleAdClick} style={{ cursor: 'pointer' }} sx={styles.adBanner}>
-      <Typography variant="h6">{barWithAd.name}</Typography>
-      <Typography>{barWithAd.ad.offer}</Typography>
-      <Typography>{barWithAd.ad.timeRange}</Typography>
+      <Typography variant="h6">{barWithOffer.name}</Typography>
+      {todayDetails && (
+        <>
+          <Typography>{todayDetails.offer}</Typography>
+          <Typography>{todayDetails.hours}</Typography>
+        </>
+      )}
     </Box>
   );
 };

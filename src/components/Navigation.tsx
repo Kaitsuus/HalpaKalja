@@ -11,7 +11,10 @@ export interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ bars, onBarClick }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Function to sort and get the top 5 cheapest bars based on their cheapest drink
+  const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const;
+  type DayOfWeek = (typeof daysOfWeek)[number];
+  const today: DayOfWeek = daysOfWeek[new Date().getDay()];
+
   const getTop5CheapestBars = () => {
     const barPrices = bars.map(bar => {
       const cheapestDrink = Math.min(...Object.values(bar.drinks));
@@ -49,9 +52,12 @@ const Navigation: React.FC<NavigationProps> = ({ bars, onBarClick }) => {
                 {typeof bar.open_hours === 'string' ? (
                   <Typography variant="body2">Open: {bar.open_hours}</Typography>
                 ) : (
-                  Object.entries(bar.open_hours).map(([day, hours]) => (
-                    <Typography key={day} variant="body2">{day}: {hours}</Typography>
-                  ))
+                  bar.open_hours[today] && (
+                    <>
+                      <Typography variant="body2">Open: {bar.open_hours[today]?.hours}</Typography>
+                      <Typography variant="body2">Offer: {bar.open_hours[today]?.offer}</Typography>
+                    </>
+                  )
                 )}
               </Box>
             </ListItem>

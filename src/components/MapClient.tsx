@@ -8,8 +8,9 @@ import LocationCityIcon from '@mui/icons-material/LocationCity';
 import { Bar } from '../interface/interface';
 import beerIco from '../assets/cheapMap.svg';
 import Image from 'next/image';
-import treAmigos from '../assets/treAmigos.svg'
+import treAmigos from '../assets/treAmigos.svg';
 import '../util/customLeafletStyles.css';
+
 export interface MapClientProps {
   selectedLocation: { lat: number, lng: number } | null;
   bars: Bar[];
@@ -39,40 +40,41 @@ const MapClient: React.FC<MapClientProps> = ({ selectedLocation, bars }) => {
         popupAnchor: [0, -35],
       });
 
+      const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'] as const;
+      type DayOfWeek = (typeof daysOfWeek)[number];
+      const today: DayOfWeek = daysOfWeek[new Date().getDay()];
+
       bars.forEach((bar: Bar) => {
         const popupContent = document.createElement('div');
-        const PopupComponent = () => (
-          <Box style={{position: 'relative'}}>
-                <Box style={{ position: 'absolute', top: '-150px', left: '58%', transform: 'translateX(-50%)' }}>
-                  <Image src={treAmigos} height={250} width={250} alt='Three beers' />
-                </Box>
-          <Box style={{ textAlign: 'center', padding: '5px', maxWidth: '200px', color: 'white'}}>
-            <Typography variant="h6" style={{ marginTop: '50px', }}>{bar.name}</Typography>
-            <Typography>
-            <Box style={{marginBottom: '10px'}}>
-              {Object.entries(bar.drinks).map(([drink, price]) => (
-                <span key={drink}>{drink}: €{price}<br /></span>
-              ))}
+        const PopupComponent = () => {
+          const todayDetails = typeof bar.open_hours !== 'string' ? bar.open_hours[today] : null;
+
+          return (
+            <Box style={{ position: 'relative' }}>
+              <Box style={{ position: 'absolute', top: '-150px', left: '58%', transform: 'translateX(-50%)' }}>
+                <Image src={treAmigos} height={250} width={250} alt='Three beers' />
               </Box>
-              {typeof bar.open_hours === 'string' ? (
-                <span>Open: {bar.open_hours}</span>
-              ) : (
-                Object.entries(bar.open_hours).map(([day, hours]) => (
-                  <span key={day}>{day}: {hours}<br /></span>
-                ))
-              )}
-            </Typography>
-            {bar.ad && (
-              <Box>
-                <Typography variant="body2">
-                  Special Offer: {bar.ad.offer} <br />
-                  Time Range: {bar.ad.timeRange}
+              <Box style={{ textAlign: 'center', padding: '5px', maxWidth: '200px', color: 'white' }}>
+                <Typography variant="h6" style={{ marginTop: '50px' }}>{bar.name}</Typography>
+                <Typography>
+                  <Box style={{ marginBottom: '10px' }}>
+                    {Object.entries(bar.drinks).map(([drink, price]) => (
+                      <span key={drink}>{drink}: €{price}<br /></span>
+                    ))}
+                  </Box>
+                  {todayDetails ? (
+                    <>
+                      <span>Open: {todayDetails.hours}</span><br />
+                      <span>Offer: {todayDetails.offer}</span>
+                    </>
+                  ) : (
+                    <span>Closed Today</span>
+                  )}
                 </Typography>
               </Box>
-            )}
-          </Box>
-          </Box>
-        );
+            </Box>
+          );
+        };
 
         const root = createRoot(popupContent);
         root.render(<PopupComponent />);

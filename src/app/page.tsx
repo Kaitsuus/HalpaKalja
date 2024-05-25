@@ -37,7 +37,7 @@ const HomePage = () => {
     return (
       <Box sx={styles.errorContainer}>
         <Image src={Sad} width={200} height={200} alt="see you soon" />
-        <Typography variant="h6" sx={styles.errorMessage}>Pahoittelut nyt on kuppi nurin</Typography>
+        <Typography variant="h6" sx={styles.errorMessage}>Pahoittelut Nyt On Kuppi Nurin</Typography>
       </Box>
     );
   }

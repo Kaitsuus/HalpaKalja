@@ -7,16 +7,21 @@ const adSchema = Joi.object({
   timeRange: Joi.string().allow('')
 });
 
+const dailyDetailsSchema = Joi.object({
+  hours: Joi.string().allow(''),
+  offer: Joi.string().allow('')
+});
+
 const openHoursSchema = Joi.alternatives().try(
   Joi.string(),
   Joi.object({
-    Monday: Joi.string().allow(''),
-    Tuesday: Joi.string().allow(''),
-    Wednesday: Joi.string().allow(''),
-    Thursday: Joi.string().allow(''),
-    Friday: Joi.string().allow(''),
-    Saturday: Joi.string().allow(''),
-    Sunday: Joi.string().allow('')
+    Monday: dailyDetailsSchema.optional(),
+    Tuesday: dailyDetailsSchema.optional(),
+    Wednesday: dailyDetailsSchema.optional(),
+    Thursday: dailyDetailsSchema.optional(),
+    Friday: dailyDetailsSchema.optional(),
+    Saturday: dailyDetailsSchema.optional(),
+    Sunday: dailyDetailsSchema.optional()
   })
 );
 
