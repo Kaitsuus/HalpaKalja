@@ -1,11 +1,11 @@
+// pages/api/contact.ts
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, message } = await req.json();
+    const { nimi, osoite, paikkakunta, drink1, price1, drink2, price2, drink3, price3 } = await req.json();
 
-    // Create a Nodemailer transporter using your email service configuration
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -14,12 +14,19 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Send email using the transporter
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: process.env.EMAIL_TO,
-      subject: 'New Contact Form Submission',
-      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`,
+      subject: 'New Bar Submission',
+      text: `
+        Name: ${nimi}
+        Address: ${osoite}
+        City: ${paikkakunta}
+        Drinks:
+        - ${drink1}: €${price1}
+        - ${drink2}: €${price2}
+        - ${drink3}: €${price3}
+      `,
     });
 
     return NextResponse.json({ message: 'Email sent successfully!' });

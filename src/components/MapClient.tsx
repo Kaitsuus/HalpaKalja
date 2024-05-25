@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useMemo } from 'react';
+'use client'
+import React, { useEffect, useRef, useMemo, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { createRoot } from 'react-dom/client';
@@ -9,7 +10,9 @@ import { Bar } from '../interface/interface';
 import beerIco from '../assets/cheapMap.svg';
 import Image from 'next/image';
 import treAmigos from '../assets/treAmigos.svg';
+import happy from '../assets/default.svg';
 import '../util/customLeafletStyles.css';
+import PopupForm from './popupForm';
 
 export interface MapClientProps {
   selectedLocation: { lat: number, lng: number } | null;
@@ -21,6 +24,7 @@ const MapClient: React.FC<MapClientProps> = ({ selectedLocation, bars }) => {
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
   const helsinkiCoords: L.LatLngTuple = useMemo(() => [60.1719, 24.9414], []);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
 
   useEffect(() => {
     if (mapContainerRef.current && !mapRef.current) {
@@ -126,6 +130,14 @@ const MapClient: React.FC<MapClientProps> = ({ selectedLocation, bars }) => {
     }
   };
 
+  const openPopup = () => {
+    setIsPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsPopupOpen(false);
+  };
+
   return (
     <>
       <div ref={mapContainerRef} id="map" style={{ height: '85vh', width: '100%' }}></div>
@@ -143,7 +155,11 @@ const MapClient: React.FC<MapClientProps> = ({ selectedLocation, bars }) => {
         <IconButton color="primary" onClick={goToHelsinki} aria-label="Back to Helsinki">
           <LocationCityIcon />
         </IconButton>
+        <IconButton color="primary" onClick={openPopup} aria-label="Add a new bar">
+          <Image src={happy} height={30} width={30} alt='Happy beer' />
+        </IconButton>
       </div>
+      <PopupForm open={isPopupOpen} onClose={closePopup} />
     </>
   );
 };
