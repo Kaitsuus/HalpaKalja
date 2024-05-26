@@ -13,6 +13,7 @@ import happyIcon from '../assets/default.svg';
 import '../util/customLeafletStyles.css';
 import noPriceIcon from '../assets/mapgray.svg';
 import unVerifiedIcon from '../assets/unverified.svg';
+import PopupForm from './popupForm';
 
 export interface MapClientProps {
   selectedLocation: { lat: number, lng: number } | null;
@@ -25,6 +26,7 @@ const MapClient: React.FC<MapClientProps> = ({ selectedLocation, bars }) => {
   const markersRef = useRef<{ [key: string]: L.Marker }>({});
   const helsinkiCoords: L.LatLngTuple = useMemo(() => [60.1719, 24.9414], []);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isBarPopupOpen, setIsBarPopupOpen] = useState(false);
   const [currentBar, setCurrentBar] = useState<Bar | null>(null);
   const [prices, setPrices] = useState({ olut: '', siideri: '', lonkero: '' });
   const [loading, setLoading] = useState(false);
@@ -234,6 +236,13 @@ const MapClient: React.FC<MapClientProps> = ({ selectedLocation, bars }) => {
       }
     }
   };
+  const openPopup = () => {
+    setIsBarPopupOpen(true);
+  };
+
+  const closePopup = () => {
+    setIsBarPopupOpen(false);
+  };
 
   return (
     <>
@@ -249,7 +258,7 @@ const MapClient: React.FC<MapClientProps> = ({ selectedLocation, bars }) => {
         <IconButton color="primary" onClick={goToCurrentLocation} aria-label="Go to current location">
           <MyLocationIcon />
         </IconButton>
-        <IconButton color="primary" onClick={() => setIsPopupOpen(true)} aria-label="Add a new bar">
+        <IconButton color="primary" onClick={openPopup} aria-label="Add a new bar">
           <Image src={happyIcon} height={35} width={35} alt='Happy beer' />
         </IconButton>
       </div>
@@ -304,6 +313,7 @@ const MapClient: React.FC<MapClientProps> = ({ selectedLocation, bars }) => {
           </DialogActions>
         </form>
       </Dialog>
+      <PopupForm open={isBarPopupOpen} onClose={closePopup} />
     </>
   );
 };
