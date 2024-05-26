@@ -94,8 +94,8 @@ export const barsService = {
   getBarByName,
   getBarByNameLatLng,
   addBar,
-  addOrUpdateBar, // Expose the function
-  addOrUpdateBars, // Expose the function
+  addOrUpdateBar,
+  addOrUpdateBars,
   updateBar,
   deleteBar,
 };

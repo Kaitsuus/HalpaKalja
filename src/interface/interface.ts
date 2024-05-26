@@ -4,6 +4,7 @@ interface DailyDetails {
 }
 
 export interface Bar {
+  id: string;
   name: string;
   lat: number;
   lng: number;
@@ -19,6 +20,7 @@ export interface Bar {
     Saturday?: DailyDetails;
     Sunday?: DailyDetails;
   };
+  verified: boolean | null;
 }
 
 export interface Ad {
@@ -31,6 +33,7 @@ export interface Ad {
 
 // Example usage:
 const barExample: Bar = {
+  id: "12312309434-3423423",
   name: "Bar Helsinki",
   lat: 60.1695,
   lng: 24.9354,
@@ -68,5 +71,6 @@ const barExample: Bar = {
       hours: "10:00-22:00",
       offer: "Alwayssomething"
     }
-  }
+  },
+  verified: true
 };

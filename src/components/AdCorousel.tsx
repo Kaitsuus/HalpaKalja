@@ -35,7 +35,8 @@ const AdCarousel: React.FC<AdCarouselProps> = ({ onAdSelect, bars }) => {
   if (barsWithOffers.length === 0) {
     return (
       <Box style={{ cursor: 'pointer' }} sx={styles.adBanner}>
-        <Typography variant="h6">Want your Bar to show here?</Typography>
+        <Typography variant="h6" color="#00475A">Vuokraa näkymä hilpeän yleisön edestä!</Typography>
+        <Typography color="#00475A">Email: yhdelleapp@gmail.com</Typography>
       </Box>
     );
   }
@@ -64,8 +65,11 @@ export default AdCarousel;
 
 const styles = {
   adBanner: {
+    display: 'flex',
+    flexDirection: 'column',
     height: '15vh',
     width: '100%',
-    padding: 2
+    padding: 2,
+    backgroundColor: "#CDEBB0"
   },
 };
